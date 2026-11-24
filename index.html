@@ -309,11 +309,14 @@ svg text{font-family:"IBM Plex Mono",monospace}
   </style>
   <p class="kicker">Section 3 · Theory &amp; calculations</p>
   <h2>Theory &amp; calculations — a textbook walkthrough</h2>
-  <p>Read each step the way a textbook presents it: <strong>the words come first</strong> — what is happening physically, which balance or law applies and why, what is assumed, and what each symbol means — <strong>and the calculation sits below the words</strong>. Following the derivation convention used throughout this section, the calculation blocks in Steps 1–6 are <strong>symbolic only</strong>: the governing equation and its algebraic rearrangement to the final symbolic form, with no numbers substituted. <strong>Every number is held back to the very end</strong> of this section, in <a href="#t-worked">“Plug in the numbers — worked example,”</a> where the design-case values are substituted into each symbolic result and every final number and numeric table appears. Every symbol is defined in the <a href="#t-nomen">nomenclature table</a>. The live demo in Section 1 evaluates these same steps.</p>
+  <p>Read each step the way a textbook presents it: <strong>the words come first</strong> — what is happening physically, which balance or law applies and why, what is assumed, and what each symbol means — <strong>and the calculation sits below the words</strong>. Following the derivation convention used throughout this section, the calculation blocks in the foundations and Steps 1–10 are <strong>symbolic only</strong>: the governing equation and its algebraic rearrangement to the final symbolic form, with no numbers substituted. The foundations state the Transport 1 balances every step draws on — the general balance and continuity, the momentum balance from the integral form through Navier–Stokes, the mechanical-energy balance, and the pressure definitions — and Steps 7–10 add the flow-regime check, the calculated drag, the choked-flow check at the valve, and the dimensional analysis. <strong>Every number is held back to the very end</strong> of this section, in <a href="#t-worked">“Plug in the numbers — worked example,”</a> where the design-case values are substituted into each symbolic result and every final number and numeric table appears. Every symbol is defined in the <a href="#t-nomen">nomenclature table</a>. The live demo in Section 1 evaluates these same steps.</p>
 
   <div class="theorynav" aria-label="Theory contents">
     <b>Contents</b>
+    <a href="#t-foundations">Foundations — the balances</a>
     <a href="#t-steps">Steps 1–6 (words, then symbolic calculation)</a>
+    <a href="#t-steps2">Steps 7–10 — regime, drag, choking, dimensions</a>
+    <a href="#t-assumptions">Assumptions &amp; limits</a>
     <a href="#t-nomen">Nomenclature</a>
     <a href="#t-notes">Model notes</a>
     <a href="#t-worked">Plug in the numbers — worked example</a>
@@ -326,10 +329,67 @@ svg text{font-family:"IBM Plex Mono",monospace}
     <li><strong>Design-case inputs (symbols only here — their values appear only in the worked example at the end):</strong> train mass m; target speed v; launch time t; drag allowance F<sub>drag</sub>; piston diameter D; air temperature T and gas constant R; receiver charged at p<sub>1</sub>, ending at p<sub>2</sub>; supply-line length L at the line pressure; polytropic exponent n; recharge time t<sub>recharge</sub>.</li>
   </ul>
 
+  <h3 id="t-foundations">Foundations — the balances every step draws on</h3>
+  <p class="deriv">Transport 1 is built from one bookkeeping statement applied three ways — to mass, to momentum, and to energy. The four blocks below state each balance in its general form, then show the reduced form this project actually uses and where it is used. Like the steps, they are symbolic only; every number waits for the worked example.</p>
+
+  <h3>Foundation A — General balance equation &amp; continuity (mass)</h3>
+  <div class="words">
+    <p>Every balance in this course has the same shape: <strong>accumulation = in − out + generation − consumption</strong>, written over a control volume. For mass there is no generation or consumption term, so the integral mass balance says the rate of change of mass inside the volume equals what flows in minus what flows out. Where it is used: at <em>steady</em> state the accumulation term vanishes and the balance collapses to the continuity equation, ṁ = ρ·A·v = constant along a stream — that is the form used at the piston in Step 3 and in the supply line in Step 5. The receiver is the opposite case: it is deliberately <em>unsteady</em>, so the accumulation term is the whole point — during a launch air only leaves, d(m)/dt = ṁ<sub>in</sub> − ṁ<sub>out</sub> with ṁ<sub>in</sub> = 0, and Step 4 integrates that drain over the usable pressure drop; during recharge the same equation runs in reverse with ṁ<sub>out</sub> = 0, which is Step 6.</p>
+  </div>
+  <p class="pe"><b>Plain English:</b> Count the air the way you'd count water in a bathtub — what accumulates is what ran in minus what drained out — and the tank, the piston, and the pipe are all just that one count.</p>
+  <div class="calcblock">
+    <h4>Calculation — Foundation A (symbols only)</h4>
+    <div class="eq">Accumulation = In − Out + Generation − Consumption &nbsp;&nbsp;[general balance]<br>
+d/dt ∫<sub>CV</sub> ρ dV + Σṁ<sub>out</sub> − Σṁ<sub>in</sub> = 0 &nbsp;&nbsp;[integral mass balance]<br>
+Steady, one stream: &nbsp;ṁ = ρ·A·v = constant &nbsp;&nbsp;[continuity — Steps 3 &amp; 5]<br>
+Unsteady receiver: &nbsp;d(m)/dt = ṁ<sub>in</sub> − ṁ<sub>out</sub> &nbsp;&nbsp;[launch: ṁ<sub>in</sub> = 0 — Step 4 · recharge: ṁ<sub>out</sub> = 0 — Step 6]</div>
+    <p class="boxed">Symbolic results: ṁ = ρ·A·v (steady) · d(m)/dt = ṁ<sub>in</sub> − ṁ<sub>out</sub> (receiver)</p>
+  </div>
+
+  <h3>Foundation B — Momentum balance: integral form, Cauchy, Navier–Stokes</h3>
+  <div class="words">
+    <p>The momentum balance says the sum of the forces on a control volume — pressure forces, gravity, wall shear, and any reaction force — equals the rate at which momentum accumulates inside it plus the net rate at which momentum flows out. Written differentially for a continuum, that statement is the Cauchy equation, with the stress divergence ∇·<b>τ</b> carrying the viscous forces. For a Newtonian fluid the stress is proportional to the velocity gradient (Foundation D's viscosity law, used in Step 7), and substituting it into Cauchy gives the Navier–Stokes equation. This project never solves Navier–Stokes directly; it uses what survives a stated list of simplifications. <strong>Steady (quasi-steady snapshot):</strong> the time derivative is dropped because each step is evaluated at one instant — the worst one — rather than tracked through the launch. <strong>One-dimensional:</strong> velocities are cross-section averages, so the momentum flux reduces to ṁ·v terms. <strong>Constant-area piston:</strong> the pressure force on the piston face reduces to p·A, with no area-change term. <strong>Negligible gravity in the line:</strong> the line is short and near-level and the pressure forces are orders of magnitude larger than the weight of the air in it, so ρg is dropped there (it is kept, as the train's weight normal to a level track, only in that it cancels out of the along-track balance). <strong>Viscous stress not solved pointwise:</strong> its net effect is carried by the friction factor f and the minor-loss sum ΣK in Step 5 instead. What remains after those drops is exactly the two momentum statements the design uses: ΣF = m·a on the train (Step 1) and F = p·A on the piston (Step 2).</p>
+  </div>
+  <p class="pe"><b>Plain English:</b> Newton's second law, written for flowing air, is a big equation — but once you freeze one instant, average across the pipe, and let the friction factor carry the rubbing, it shrinks to the two push equations this design actually uses.</p>
+  <div class="calcblock">
+    <h4>Calculation — Foundation B (symbols only)</h4>
+    <div class="eq">ΣF = d/dt ∫<sub>CV</sub> <b>v</b>ρ dV + ∫<sub>CS</sub> <b>v</b>ρ(<b>v</b>·<b>n</b>) dA &nbsp;&nbsp;[integral momentum balance]<br>
+ρ(∂<b>v</b>/∂t + <b>v</b>·∇<b>v</b>) = −∇p + ∇·<b>τ</b> + ρ<b>g</b> &nbsp;&nbsp;[Cauchy equation]<br>
+ρ(∂<b>v</b>/∂t + <b>v</b>·∇<b>v</b>) = −∇p + μ∇²<b>v</b> + ρ<b>g</b> &nbsp;&nbsp;[Navier–Stokes, Newtonian fluid]<br>
+Simplified (steady snapshot, 1-D, constant area, ρg dropped in line): &nbsp;ΣF = m·a &nbsp;·&nbsp; F = p·A</div>
+    <p class="boxed">Symbolic results: integral balance → Cauchy → Navier–Stokes → ΣF = m·a (Step 1) and F = p·A (Step 2)</p>
+  </div>
+
+  <h3>Foundation C — Mechanical energy balance (engineering Bernoulli)</h3>
+  <div class="words">
+    <p>Dotting the momentum equation with the velocity gives the mechanical-energy balance: along a streamline, pressure energy, kinetic energy, and elevation head trade against each other, minus what friction destroys and plus what a machine adds. In head form, between a point in the receiver and a point at the cylinder, the compressor-work term is zero during the launch itself (the compressor did its work earlier, in Step 6) and the head loss h<sub>L</sub> is the Darcy–Weisbach plus minor-loss total of Step 5. Read in words: the pressure energy stored in the receiver becomes the kinetic energy of the moving air and then, through the piston, the kinetic energy of the train — minus the friction loss in the line and minus the work spent against drag. Elevation change is negligible on a level launch track, so the z terms cancel. This is the energy audit that Step 1's KE and work numbers and Step 5's ΔP must jointly satisfy.</p>
+  </div>
+  <p class="pe"><b>Plain English:</b> Energy is never created here, only converted — the tank's stored pressure turns into the train's speed, and whatever friction skims off along the way is simply gone.</p>
+  <div class="calcblock">
+    <h4>Calculation — Foundation C (symbols only)</h4>
+    <div class="eq">p₁/ρg + α₁v₁²/2g + z₁ + h<sub>machine</sub> = p₂/ρg + α₂v₂²/2g + z₂ + h<sub>L</sub> &nbsp;&nbsp;[mechanical energy, head form]<br>
+h<sub>L</sub> = [ f·(L/D) + ΣK ]·v²/2g &nbsp;&nbsp;[head loss — Step 5]<br>
+Per unit mass: &nbsp;Δp/ρ + Δ(v²/2) + gΔz = w<sub>in</sub> − e<sub>loss</sub> &nbsp;&nbsp;[w<sub>in</sub> = compressor work, Step 6; Δz ≈ 0]</div>
+    <p class="boxed">Symbolic result: stored pressure energy → train KE − line friction loss − drag work</p>
+  </div>
+
+  <h3>Foundation D — Pressure: fluid statics, gauge vs. absolute</h3>
+  <div class="words">
+    <p>Fluid statics gives how pressure varies with depth, dp/dz = −ρg. Over the vertical extent of any component here that variation is tiny next to the cylinder pressure, so each component is treated as being at one uniform pressure — the static equation is checked, and then set aside, rather than ignored. The distinction that does matter is the zero of the scale. A <em>gauge</em> pressure is measured from the local atmosphere; an <em>absolute</em> pressure is measured from vacuum, and the two differ by exactly atmospheric pressure. The piston force balance (Step 2) correctly uses gauge pressure, because the atmosphere pushes on the back of the piston and on the outside of the train, so it cancels. The ideal-gas law (Steps 3, 4 and 6) must use absolute pressure: it counts the actual molecular density of the gas, and feeding it a gauge pressure would understate the density — and so the air mass — by the missing atmosphere.</p>
+  </div>
+  <p class="pe"><b>Plain English:</b> A tire gauge ignores the air pressing on everything around us — fine for forces, since that push cancels — but the gas law counts every molecule, so it has to start counting from a total vacuum.</p>
+  <div class="calcblock">
+    <h4>Calculation — Foundation D (symbols only)</h4>
+    <div class="eq">dp/dz = −ρg &nbsp;&nbsp;[fluid statics — variation negligible across each component]<br>
+p<sub>abs</sub> = p<sub>gauge</sub> + p<sub>atm</sub><br>
+ρ = p<sub>abs</sub>/(R·T) &nbsp;&nbsp;[ideal-gas law — absolute pressure only]</div>
+    <p class="boxed">Symbolic results: p<sub>abs</sub> = p<sub>gauge</sub> + p<sub>atm</sub> · gas law takes p<sub>abs</sub>, force balance takes p<sub>gauge</sub></p>
+  </div>
+
   <h3 id="t-steps">Step 1 — Train dynamics</h3>
   <div class="words">
     <p>The train is treated as a single point mass pushed along a straight, level track, so the governing statement is the linear momentum balance, ΣF = m·a: the net force on the train equals its mass m times its acceleration a. The launch is modelled with constant acceleration, starting from rest, so the speed builds linearly and the target speed v is reached at the end of the launch time t — that gives a = v / t directly, and the distance covered is the average speed (v/2) times t. Two energy statements follow from the same push: the kinetic energy the train must end up with, KE = ½·m·v², and the work the thrust does over the launch distance s, W = F<sub>d</sub>·s. Power is force times speed, so it peaks at the end of the launch, where v is largest; the average power is the work divided by the launch time.</p>
-    <p>One allowance is added before the result is used anywhere else. Rolling resistance and air resistance are lumped into a single constant drag allowance, F<sub>drag</sub>, and the piston must deliver the momentum-balance thrust <em>plus</em> that allowance. That larger force is the design thrust, F<sub>d</sub> — the quantity every later step is sized on.</p>
+    <p>One allowance is added before the result is used anywhere else. Rolling resistance and air resistance are lumped into a single constant drag allowance, F<sub>drag</sub>, and the piston must deliver the momentum-balance thrust <em>plus</em> that allowance. That larger force is the design thrust, F<sub>d</sub> — the quantity every later step is sized on. The allowance is not a guess: Step 8 calculates it from the standard drag equation for flow around a submerged body, evaluated at top speed and then held constant, which is conservative early in the launch when the train — and so the true drag — is slower.</p>
   </div>
   <p class="pe"><b>Plain English:</b> Shove a heavy train to highway speed in a few seconds — the push, the energy, and the power all follow from how heavy it is, how fast it must go, and how little time it gets.</p>
   <div class="calcblock">
@@ -405,6 +465,20 @@ Re = ρ·v·D / μ &nbsp;·&nbsp; M = v / c, &nbsp;c = √(γRT)<br>
     <p class="boxed">Symbolic results: v = ṁ<sub>peak</sub>/(ρ<sub>line</sub>·A<sub>line</sub>) · ΔP<sub>total</sub> = [ f·(L/D) + ΣK ]·(ρv²/2)</p>
   </div>
 
+  <h3>Step 5, continued — Where f comes from: Colebrook, Haaland, and the Moody chart</h3>
+  <div class="words">
+    <p>The friction factor is not a constant of the pipe; it is a function of the Reynolds number and the relative roughness ε/D, and the Moody chart is its graphical form: enter with Re on the horizontal axis, follow up to the curve for the pipe's ε/D, and read f off the left axis. At very high Re the curves flatten into the fully rough zone, where f depends on ε/D alone. Analytically the chart is the Colebrook equation — implicit, because f appears on both sides, so it is normally solved by iteration. The Haaland equation used in Step 5 is an explicit approximation of Colebrook, chosen so the demo can evaluate f directly with no iteration loop; the two agree closely at this design point, as the worked example confirms. Minor losses can be written two equivalent ways: as the ΣK sum used in Step 5, or as an <em>equivalent length</em> of extra straight pipe, L<sub>eq</sub> = K·D/f per fitting, folded into the Darcy–Weisbach length. The worked example gives the total equivalent length for this line — it is many times the physical length, which is the same statement as “minor losses dominate a short, fat line,” in length units.</p>
+  </div>
+  <p class="pe"><b>Plain English:</b> The Moody chart is a map from “how fast and how rough” to “how grippy” — Colebrook is that map written as an equation, Haaland is the same map in a form a calculator can answer in one shot, and the valves and bends can equally be counted as extra metres of pipe.</p>
+  <div class="calcblock">
+    <h4>Calculation — Step 5, continued (symbols only)</h4>
+    <div class="eq">1/√f = −2.0·log<sub>10</sub>[ (ε/D)/3.7 + 2.51/(Re·√f) ] &nbsp;&nbsp;[Colebrook — implicit]<br>
+1/√f = −1.8·log<sub>10</sub>[ ((ε/D)/3.7)<sup>1.11</sup> + 6.9/Re ] &nbsp;&nbsp;[Haaland — explicit approximation, used in Step 5]<br>
+Moody chart: &nbsp;f = chart reading at (Re, ε/D) &nbsp;·&nbsp; fully rough limit: f = f(ε/D) only<br>
+L<sub>eq</sub> = K·D/f per fitting &nbsp;→&nbsp; ΔP = f·[(L + ΣL<sub>eq</sub>)/D]·(ρv²/2) &nbsp;&nbsp;[equivalent-length form of ΣK]</div>
+    <p class="boxed">Symbolic results: f = f(Re, ε/D) via Colebrook/Haaland/Moody · ΣK ⇔ ΣL<sub>eq</sub> with L<sub>eq</sub> = K·D/f</p>
+  </div>
+
   <h3>Step 6 — Compressor, recharge, expansion cooling</h3>
   <div class="words">
     <p>Between launches the compressor runs the Step 4 mass balance in reverse, slowly: it must replace m<sub>air</sub> kilograms of air, compressing them from atmospheric pressure up to the receiver pressure p<sub>1</sub>. Real compression is neither perfectly slow nor perfectly insulated, so it is modelled as a polytropic process with exponent n, between the isothermal limit and the adiabatic limit. The polytropic work formula gives the work per kilogram, w; multiplying by m<sub>air</sub> gives the energy per launch, and dividing by the allowed recharge time gives the compressor power. The two limits are evaluated as bounds in the worked example, so the design value can be seen sitting between them.</p>
@@ -420,6 +494,72 @@ T<sub>2</sub> = T<sub>1</sub>·(p<sub>abs</sub>/p<sub>1</sub>)<sup>(n−1)/n</su
 s(y; φ) = ∂ ln y / ∂ ln φ &nbsp;&nbsp;[normalised sensitivity]</div>
     <p class="boxed">Symbolic results: E<sub>comp</sub> = w·m<sub>air</sub> · P<sub>comp</sub> = E<sub>comp</sub>/t<sub>recharge</sub> · T<sub>2</sub> = T<sub>1</sub>·(p<sub>abs</sub>/p<sub>1</sub>)<sup>(n−1)/n</sup></p>
   </div>
+
+  <h3 id="t-steps2">Step 7 — Viscosity and flow regime: why this flow is turbulent</h3>
+  <div class="words">
+    <p>Newton's law of viscosity defines the fluid property behind every friction result on this page: the shear stress τ between layers of fluid is proportional to the velocity gradient across them, τ = μ·(du/dy), with μ the dynamic viscosity. How that stress organises the flow depends on the Reynolds number, the ratio of inertial to viscous forces. At low Re the flow is <em>laminar</em> — smooth layers, a parabolic velocity profile, and the Hagen–Poiseuille law, in which pressure drop is proportional to velocity and f = 64/Re. At high Re the flow is <em>turbulent</em> — fluctuating and well mixed, with a much flatter velocity profile: almost all of the velocity change is squeezed into a thin boundary layer (viscous sublayer) at the wall while the core moves at nearly one speed, which is precisely why the one-dimensional, area-averaged model of Step 5 is legitimate. The line flow in this design sits far above the laminar–turbulent transition, so the flow is turbulent, Hagen–Poiseuille does <strong>not</strong> apply, and the pressure drop must come from Darcy–Weisbach with f from the Re- and roughness-dependent correlations of Step 5 — scaling with v², not with v.</p>
+  </div>
+  <p class="pe"><b>Plain English:</b> Slow, sticky flow glides in smooth layers and obeys the simple laminar law — this air is moving far too fast for that, so it tumbles turbulently, and the rougher turbulent rules are the ones that price the pipe.</p>
+  <div class="calcblock">
+    <h4>Calculation — Step 7 (symbols only)</h4>
+    <div class="eq">τ = μ·(du/dy) &nbsp;&nbsp;[Newton's law of viscosity]<br>
+Re = ρ·v·D/μ &nbsp;&nbsp;[inertial ÷ viscous forces]<br>
+Laminar only: &nbsp;ΔP = 32·μ·L·v/D² &nbsp;·&nbsp; f = 64/Re &nbsp;&nbsp;[Hagen–Poiseuille — does not apply here]<br>
+Turbulent (this design): &nbsp;ΔP from Darcy–Weisbach with f(Re, ε/D) &nbsp;&nbsp;[Step 5]</div>
+    <p class="boxed">Symbolic results: τ = μ·(du/dy) · regime set by Re · turbulent → Darcy–Weisbach, not Hagen–Poiseuille</p>
+  </div>
+
+  <h3>Step 8 — Drag on the train: the allowance, calculated</h3>
+  <div class="words">
+    <p>The train moving through still air is the classic Transport 1 problem of flow around a submerged object: the air exerts a drag force made of pressure (form) drag on the train's blunt front and skin-friction drag along its sides, conventionally lumped into a single drag coefficient C<sub>d</sub> multiplying the dynamic pressure of the oncoming flow and the frontal area A<sub>front</sub>. Step 1's F<sub>drag</sub> is that force, evaluated at top speed — the worst instant — and then held constant across the launch as the design allowance. Holding the top-speed value is deliberately conservative: for most of the launch the train is slower and the true drag, growing with v², is smaller, so the piston is sized for slightly more resistance than it will actually meet. The aerodynamic part dominates the allowance; rolling resistance of the wheels is small beside it at these speeds and is absorbed in the rounding of the result, as the worked example shows.</p>
+  </div>
+  <p class="pe"><b>Plain English:</b> Pushing a blunt train through air at highway speed takes a real, calculable shove of its own — the drag formula prices that shove, and it lands right where the allowance already sat.</p>
+  <div class="calcblock">
+    <h4>Calculation — Step 8 (symbols only)</h4>
+    <div class="eq">F<sub>drag</sub> = ½·ρ<sub>air</sub>·v²·C<sub>d</sub>·A<sub>front</sub> &nbsp;&nbsp;[drag on a submerged body]<br>
+F<sub>d</sub> = m·a + F<sub>drag</sub> &nbsp;&nbsp;[feeds Step 1 — design thrust unchanged]</div>
+    <p class="boxed">Symbolic result: F<sub>drag</sub> = ½·ρ<sub>air</sub>·v²·C<sub>d</sub>·A<sub>front</sub></p>
+  </div>
+
+  <h3>Step 9 — Compressible flow: choked-flow check at the launch valve</h3>
+  <div class="words">
+    <p>One compressible-flow check remains, at the launch valve between the receiver and the cylinder. For flow from a stagnation reservoir (pressure p<sub>0</sub>, temperature T<sub>0</sub>) through an opening, the mass flux rises as the downstream pressure falls — until the throat reaches the local speed of sound. Below a critical downstream-to-upstream pressure ratio, set only by the ratio of specific heats γ, the flow is <em>choked</em>: the flux is capped at the value G* fixed by the upstream state alone, and lowering the downstream pressure further cannot pass more air. The design check is a comparison of two ratios: the critical ratio from the isentropic relations, and the actual cylinder-to-receiver pressure ratio during the launch. Because the actual ratio sits below the critical one, the valve runs choked, and the valve area needed to pass the peak mass flow of Step 3 follows directly from ṁ<sub>peak</sub> = G*·A<sub>valve</sub>. Choking here is not a failure — it is what meters the launch — but it means the valve, sized by this step, and not the cylinder pressure, sets the maximum delivery rate.</p>
+  </div>
+  <p class="pe"><b>Plain English:</b> Open a high-pressure tank and the air can only escape so fast — once the exit hits the speed of sound the flow is capped no matter how low the pressure beyond it falls — and that cap is what sizes the launch valve.</p>
+  <div class="calcblock">
+    <h4>Calculation — Step 9 (symbols only)</h4>
+    <div class="eq">p*/p<sub>0</sub> = (2/(γ+1))<sup>γ/(γ−1)</sup> &nbsp;&nbsp;[critical pressure ratio, isentropic]<br>
+Choked if &nbsp;p<sub>cyl</sub>/p<sub>0</sub> &lt; p*/p<sub>0</sub><br>
+G* = p<sub>0</sub>·√(γ/(R·T<sub>0</sub>))·(1 + (γ−1)/2)<sup>−(γ+1)/(2(γ−1))</sup> &nbsp;&nbsp;[choked mass flux]<br>
+A<sub>valve</sub> = ṁ<sub>peak</sub>/G* &nbsp;·&nbsp; D<sub>valve</sub> = √(4·A<sub>valve</sub>/π)</div>
+    <p class="boxed">Symbolic results: choked when p<sub>cyl</sub>/p<sub>0</sub> &lt; (2/(γ+1))<sup>γ/(γ−1)</sup> · A<sub>valve</sub> = ṁ<sub>peak</sub>/G*</p>
+  </div>
+
+  <h3>Step 10 — Dimensional analysis: the Pi groups that run the design</h3>
+  <div class="words">
+    <p>The last step steps back from the algebra. The line-and-valve problem involves the variables Δp, ρ, v, D, μ, ε, L and the reservoir and cylinder pressures, expressed in three fundamental dimensions (mass, length, time). The Buckingham-Pi theorem then guarantees the behaviour is fully described by a small set of independent dimensionless groups — and they are exactly the groups the earlier steps kept computing. Each one controls a distinct design question. <strong>Re</strong> sets the flow regime and, with ε/D, the friction factor (Steps 5 and 7). <strong>Mach M</strong> decides whether the constant-density line model is legitimate (Step 5). The <strong>Euler number Eu</strong> = Δp/(ρ·v²) is the pressure loss measured in units of the flow's own dynamic pressure — comparing it with the loss bracket of Step 5 shows it is that bracket, halved. <strong>L/D</strong> weighs wall friction against the fittings (Step 5). <strong>ε/D</strong> fixes the roughness regime on the Moody chart (Step 5, continued). The <strong>pressure ratios</strong> — end-to-start in the receiver, and cylinder-to-receiver at the valve — set the tank size (Step 4) and the choking verdict (Step 9). Two launches with the same Pi groups behave identically when scaled, which is why the Maxx Force comparison in Section 4 is made in these terms — same speed and pressure class, different acceleration group — rather than by comparing hardware nobody publishes.</p>
+  </div>
+  <p class="pe"><b>Plain English:</b> Strip the units off the problem and a handful of pure numbers remain — match those numbers and any two launches, at any size, behave the same way; they are the real dials of the design.</p>
+  <div class="calcblock">
+    <h4>Calculation — Step 10 (symbols only)</h4>
+    <div class="eq">Π groups from { Δp, ρ, v, D, μ, ε, L, p } in dimensions { M, L, T }:<br>
+Re = ρ·v·D/μ &nbsp;·&nbsp; M = v/c &nbsp;·&nbsp; Eu = Δp/(ρ·v²) &nbsp;·&nbsp; L/D &nbsp;·&nbsp; ε/D &nbsp;·&nbsp; p<sub>cyl</sub>/p<sub>0</sub>, p₂/p₁<br>
+Eu = ½·[ f·(L/D) + ΣK ] &nbsp;&nbsp;[the Step 5 loss bracket, in dynamic-pressure units]</div>
+    <p class="boxed">Symbolic results: Re (regime, f) · M (compressibility) · Eu (loss) · L/D (friction share) · ε/D (roughness) · pressure ratios (tank, choking)</p>
+  </div>
+
+  <h3 id="t-assumptions">Assumptions &amp; limits — stated explicitly</h3>
+  <p>Every result in this section rests on the assumptions below. Each is listed with why it is reasonable here and where it breaks down.</p>
+  <ul>
+    <li><strong>Steady / quasi-steady snapshots:</strong> each step is evaluated at a single worst instant (peak flow, lowest receiver pressure) instead of integrated through the launch. Reasonable because the flow in the line adjusts far faster than the train accelerates; it breaks down in the first fraction of a second while the valve is still opening.</li>
+    <li><strong>Ideal gas:</strong> air is treated with pV = mRT throughout. Reasonable at these pressures near ambient temperature, where the compressibility factor stays close to unity; it breaks down at much higher pressures or at the cold expanded temperatures of Step 6, where a Z-factor correction would shift the density slightly.</li>
+    <li><strong>Isothermal receiver:</strong> the stored air is taken to stay at one temperature while it drains. Reasonable for sizing the mass from the two end pressures, since the tank's metal mass buffers the change; it breaks down in detail — the real tank cools as it discharges, delivering marginally less mass than the isothermal count.</li>
+    <li><strong>Negligible elevation change:</strong> the track and line are treated as level, so no hydrostatic or elevation-head term appears. Reasonable because any height difference is metres at most against megapascal pressures; it would break down only for a launch routed over a large vertical rise.</li>
+    <li><strong>Constant piston pressure:</strong> the valve is assumed to hold the cylinder at one pressure for the whole launch. Reasonable because the receiver's end pressure is specified above the cylinder's need, leaving margin for the sag; it breaks down at the very end of the launch if that margin is spent, which is exactly the sizing point the model notes below examine.</li>
+    <li><strong>Constant line density:</strong> the supply line is evaluated at one density, taken at the line pressure. Reasonable while the Mach number stays low (Step 5 checks it for every diameter); it breaks down for small diameters, where the Mach number climbs and the density genuinely varies along the line.</li>
+    <li><strong>Constant drag at its top-speed value:</strong> the Step 8 drag is evaluated once, at top speed, and held. Reasonable — and conservative — because the true drag grows with v² and is smaller for most of the launch; it breaks down as a <em>prediction</em> of the instantaneous force, though not as a sizing allowance.</li>
+    <li><strong>Expansion cooling not fed back:</strong> the Step 6 temperature drop is computed and reported but not looped back into the densities of Steps 3–5. Reasonable because colder air is denser, so the un-corrected model overstates, not understates, the volumetric demand; it breaks down for the hardware questions — icing, seal materials — where the cold itself is the design driver.</li>
+  </ul>
 
 <h3 id="t-nomen">Nomenclature — every symbol, defined</h3>
   <p>Lowercase <span class="mono">p</span> is always pressure; uppercase <span class="mono">P</span> is always power. <span class="mono">Δ</span> means “difference across,” and a subscript names the kind (<span class="mono">ṁ<sub>peak</sub></span>, <span class="mono">ΔP<sub>f</sub></span>).</p>
@@ -467,6 +607,18 @@ s(y; φ) = ∂ ln y / ∂ ln φ &nbsp;&nbsp;[normalised sensitivity]</div>
         <tr><td class="sym" data-l="Symbol">w</td><td data-l="Meaning">Compression work per kilogram of air — the energy the compressor must supply for each kilogram it squeezes from atmospheric pressure up to receiver pressure. Total energy per launch is E<sub>comp</sub> = w · m<sub>air</sub>.</td><td class="units" data-l="Units">J/kg; shown in kJ/kg</td></tr>
         <tr><td class="sym" data-l="Symbol">η</td><td data-l="Meaning">Efficiency (Greek letter eta) — the share of energy that survives a step instead of being lost as heat and friction. A perfect machine would score the maximum; real machines score lower. It is the link between the ideal compression power and the installed motor size, which is chosen a class above the ideal power to cover drive and motor losses.</td><td class="units" data-l="Units">No units (a fraction)</td></tr>
         <tr><td class="sym" data-l="Symbol">t<sub>recharge</sub></td><td data-l="Meaning">Recharge time — how long the compressor takes to replace the air used and re-pressurise the receiver between launches. A longer, lazier refill is why the compressor can be so much smaller than the launch power.</td><td class="units" data-l="Units">s (seconds)</td></tr>
+        <tr class="grp"><td colspan="3">Regime, drag, valve and dimensionless groups — Steps 7 to 10</td></tr>
+        <tr><td class="sym" data-l="Symbol">τ</td><td data-l="Meaning">Shear stress (Greek letter tau) — the rubbing force per unit area between layers of moving air, or between the air and the pipe wall. Newton's law of viscosity ties it to the velocity gradient: τ = μ·(du/dy).</td><td class="units" data-l="Units">Pa</td></tr>
+        <tr><td class="sym" data-l="Symbol">du/dy</td><td data-l="Meaning">Velocity gradient across the flow — how quickly the air's speed changes from the wall (where it is stuck at zero) to the core. Steep near the wall in turbulent flow; that thin steep region is the boundary layer.</td><td class="units" data-l="Units">1/s</td></tr>
+        <tr><td class="sym" data-l="Symbol">ρ<sub>air</sub></td><td data-l="Meaning">Density of the outside air the train pushes through — ordinary atmospheric air, not the compressed air inside the machine. Used only in the drag calculation, Step 8.</td><td class="units" data-l="Units">kg/m³</td></tr>
+        <tr><td class="sym" data-l="Symbol">C<sub>d</sub></td><td data-l="Meaning">Drag coefficient — the shape factor for the train as a submerged body: how much of the oncoming air's dynamic pressure ends up as drag force. A blunt shape scores near one; a streamlined shape far less.</td><td class="units" data-l="Units">No units (dimensionless)</td></tr>
+        <tr><td class="sym" data-l="Symbol">A<sub>front</sub></td><td data-l="Meaning">Frontal area of the train — the area of the “shadow” the train casts facing its direction of travel. Drag is priced per unit of this area.</td><td class="units" data-l="Units">m²</td></tr>
+        <tr><td class="sym" data-l="Symbol">γ</td><td data-l="Meaning">Ratio of specific heats of air (Greek letter gamma). It sets the speed of sound, the adiabatic limit of the polytropic exponent, and the critical pressure ratio for choked flow in Step 9.</td><td class="units" data-l="Units">No units (dimensionless)</td></tr>
+        <tr><td class="sym" data-l="Symbol">p<sub>0</sub>, T<sub>0</sub></td><td data-l="Meaning">Stagnation (reservoir) pressure and temperature — the state of the air sitting in the receiver before it moves. In Step 9 these are the upstream conditions that alone fix the choked mass flux.</td><td class="units" data-l="Units">Pa; K</td></tr>
+        <tr><td class="sym" data-l="Symbol">p*</td><td data-l="Meaning">Critical (throat) pressure — the downstream pressure at which the valve throat reaches Mach one. Below the ratio p*/p<sub>0</sub>, the flow is choked and the mass flux cannot rise further.</td><td class="units" data-l="Units">Pa</td></tr>
+        <tr><td class="sym" data-l="Symbol">G*</td><td data-l="Meaning">Choked mass flux — the maximum kilograms per second that can pass through each square metre of valve area from a given reservoir state. Valve area follows as A<sub>valve</sub> = ṁ<sub>peak</sub>/G*.</td><td class="units" data-l="Units">kg/m²·s</td></tr>
+        <tr><td class="sym" data-l="Symbol">Eu</td><td data-l="Meaning">Euler number — the pressure loss measured in units of the flow's own dynamic pressure, Eu = Δp/(ρ·v²). It is the Step 5 loss bracket in dimensionless form: Eu = ½·[f·(L/D) + ΣK].</td><td class="units" data-l="Units">No units (dimensionless)</td></tr>
+        <tr><td class="sym" data-l="Symbol">L<sub>eq</sub></td><td data-l="Meaning">Equivalent length — the length of extra straight pipe that would waste the same pressure as one fitting, L<sub>eq</sub> = K·D/f. Lets minor losses be counted as pipe length instead of as ΣK.</td><td class="units" data-l="Units">m (metres)</td></tr>
       </tbody>
     </table>
   </div>
@@ -482,20 +634,21 @@ s(y; φ) = ∂ ln y / ∂ ln φ &nbsp;&nbsp;[normalised sensitivity]</div>
   <div class="card">
     <ul>
       <li><strong>Demo (Section 1)</strong> — change any input and Steps 1–6 recompute; the diameter table and chart are Step 5 evaluated across D.</li>
-      <li><strong>Theory (this section)</strong> — the six textbook walkthrough steps in symbols, the nomenclature, the model notes, and the worked example where the numbers land.</li>
+      <li><strong>Theory (this section)</strong> — the foundations and the ten textbook walkthrough steps in symbols, the nomenclature, the model notes, and the worked example where the numbers land.</li>
       <li><strong>Worked example</strong> — use it to hand-check any single number on the page: each substitution starts from the symbolic result of its step.</li>
       <li><strong>Sensitivity</strong> — predict the effect of a slider change before making it, then verify in the demo.</li>
     </ul>
   </div>
 
   <h3 id="t-worked" style="margin-top:34px">Plug in the numbers — worked example</h3>
-  <p>This subsection is the <strong>only place in Section 3 where numbers appear</strong>. It takes each symbolic result from Steps 1–6, substitutes the design-case values, and gives every final number — followed by the numeric tables (receiver tradeoff, supply-line diameters, dimensionless groups, sensitivity) and the cost of the shortcuts named in the notes. Design-case inputs: train mass m = 7,500 kg; target speed v = 35 m/s; launch time t = 2.8 s; drag allowance F<sub>drag</sub> = 5 kN; piston diameter D = 0.36 m; air at T = 300 K with R = 287 J/kg·K; receiver charged at p<sub>1</sub> = 3.0 MPa abs, ending at p<sub>2</sub> = 1.2 MPa abs; supply line L = 15 m at ≈ 2.0 MPa abs line pressure (ρ<sub>line</sub> = 23.2 kg/m³, μ = 1.85 × 10⁻⁵ Pa·s, speed of sound c = 347 m/s, ΣK = 6); compression polytropic with n = 1.3; recharge time t<sub>recharge</sub> = 90 s.</p>
+  <p>This subsection is the <strong>only place in Section 3 where numbers appear</strong>. It takes each symbolic result from Steps 1–6, substitutes the design-case values, and gives every final number — followed by the numeric tables (receiver tradeoff, supply-line diameters, dimensionless groups, sensitivity) and the cost of the shortcuts named in the notes. Design-case inputs: train mass m = 7,500 kg; target speed v = 35 m/s; launch time t = 2.8 s; drag allowance F<sub>drag</sub> = 5 kN; piston diameter D = 0.36 m; air at T = 300 K with R = 287 J/kg·K; receiver charged at p<sub>1</sub> = 3.0 MPa abs, ending at p<sub>2</sub> = 1.2 MPa abs; supply line L = 15 m at ≈ 2.0 MPa abs line pressure (ρ<sub>line</sub> = 23.2 kg/m³, μ = 1.85 × 10⁻⁵ Pa·s, speed of sound c = 347 m/s, ΣK = 6); compression polytropic with n = 1.3; recharge time t<sub>recharge</sub> = 90 s. For Steps 7–10: outside air ρ<sub>air</sub> = 1.2 kg/m³ with train frontal area A<sub>front</sub> = 6.25 m² and drag coefficient C<sub>d</sub> = 1.1; valve upstream (stagnation) state p<sub>0</sub> = 3.0 MPa abs, T<sub>0</sub> = 300 K, γ = 1.4.</p>
 
   <div class="calcblock">
     <h4>Step 1 — Train dynamics, with numbers</h4>
     <div class="eq">a = v / t = 35 / 2.8 = 12.5 m/s² &nbsp;(12.5 / 9.81 = 1.27 g)<br>
 s = v·t / 2 = 35 × 2.8 / 2 = 49 m<br>
 F = m·a = 7,500 × 12.5 = 93.8 kN<br>
+F<sub>drag</sub> = ½·ρ<sub>air</sub>·v²·C<sub>d</sub>·A<sub>front</sub> = ½ × 1.2 × 35² × 1.1 × 6.25 = 5.05 kN ≈ 5.0 kN &nbsp;[Step 8 — the allowance, calculated]<br>
 F<sub>d</sub> = F + F<sub>drag</sub> = 93.8 + 5 = 98.8 kN<br>
 KE = ½·m·v² = ½ × 7,500 × 35² = 4.59 MJ<br>
 W = F<sub>d</sub>·s = 98.8 kN × 49 m = 4.84 MJ<br>
@@ -577,6 +730,7 @@ Re = ρ<sub>line</sub>·v·D / μ = 23.2 × 38.9 × 0.25 / (1.85 × 10⁻⁵) = 
           <tr><td data-l="Group">Length ratio, L/D</td><td data-l="Definition">15 m / 0.25 m</td><td class="num" data-l="Value">60</td><td data-l="Reading">Short, fat line — why minor losses beat friction</td></tr>
           <tr><td data-l="Group">Minor-loss sum, ΣK</td><td data-l="Definition">Valves + bends + manifold</td><td class="num" data-l="Value">6</td><td data-l="Reading">Costs 105 kPa vs. 14 kPa of wall friction</td></tr>
           <tr><td data-l="Group">Loss fraction, ΔP / p<sub>line</sub></td><td data-l="Definition">120 kPa / 2.0 MPa</td><td class="num" data-l="Value">0.060 (6.0%)</td><td data-l="Reading">The accept/reject test for a diameter</td></tr>
+          <tr><td data-l="Group">Euler number, Eu</td><td data-l="Definition">Δp/(ρ·v²) = 120 kPa / (23.2 × 38.9²)</td><td class="num" data-l="Value">3.42</td><td data-l="Reading">Loss in dynamic-pressure units — equals ½·[f·(L/D) + ΣK] = ½ × 6.82 (Step 10)</td></tr>
           <tr><td data-l="Group">Peak / average power</td><td data-l="Definition">3.46 MW / 1.73 MW</td><td class="num" data-l="Value">2.00</td><td data-l="Reading">Size at the peak, not the average</td></tr>
           <tr><td data-l="Group">Receiver pressure ratio, p₁ / p₂</td><td data-l="Definition">3.0 MPa / 1.2 MPa</td><td class="num" data-l="Value">2.50</td><td data-l="Reading">Sets tank volume (Step 4) and cooling (Step 6)</td></tr>
           <tr><td data-l="Group">Polytropic exponent, n</td><td data-l="Definition">p·V<sup>n</sup> = const</td><td class="num" data-l="Value">1.3</td><td data-l="Reading">Between isothermal (1) and adiabatic (1.4)</td></tr>
@@ -618,6 +772,18 @@ T<sub>2</sub> = T<sub>1</sub>·(p<sub>abs</sub>/p<sub>1</sub>)<sup>(n−1)/n</su
       <li><strong>Isothermal compression:</strong> 18.1 MJ instead of the 27.5 MJ polytropic design value.</li>
       <li><strong>Sizing at average flow:</strong> at ṁ<sub>avg</sub> = 22.2 kg/s instead of the 44.3 kg/s peak, line losses would be understated roughly 4×, since losses scale with ṁ². At the sizing point the receiver sits at p<sub>2</sub> = 1.2 MPa abs against the cylinder's 1.07 MPa abs need — ≈ 0.13 MPa of margin.</li>
     </ul>
+  </div>
+
+  <div class="calcblock">
+    <h4>Steps 7–10 — Regime, drag, choked flow, and friction cross-checks, with numbers</h4>
+    <div class="eq">Step 7 — regime: &nbsp;Re = 12.2 × 10⁶ ≫ 4,000 → fully turbulent. Hagen–Poiseuille (laminar, f = 64/Re) does not apply; Darcy–Weisbach with f(Re, ε/D) is the correct law, as used in Step 5.<br>
+Step 8 — drag: &nbsp;F<sub>drag</sub> = ½·ρ<sub>air</sub>·v²·C<sub>d</sub>·A<sub>front</sub> = ½ × 1.2 × 35² × 1.1 × 6.25 = 5.05 kN ≈ 5.0 kN — the calculated drag lands on the 5 kN allowance, so the design thrust stands: F<sub>d</sub> = 93.8 + 5 = 98.8 kN (unchanged).<br>
+Step 9 — choked flow: &nbsp;p*/p<sub>0</sub> = (2/(γ+1))<sup>γ/(γ−1)</sup> = 0.528 for air (γ = 1.4). Actual ratio p<sub>cyl</sub>/p<sub>0</sub> = 1.07 / 3.0 = 0.357 &lt; 0.528 → the launch valve is choked.<br>
+G* = 7,001 kg/m²/s &nbsp;(p<sub>0</sub> = 3.0 MPa abs, T<sub>0</sub> = 300 K, R = 287 J/kg·K) &nbsp;→&nbsp; A<sub>valve</sub> = ṁ<sub>peak</sub>/G* = 44.3 / 7,001 = 0.00633 m² &nbsp;→&nbsp; D<sub>valve</sub> = √(4A/π) = 0.090 m (90 mm).<br>
+Step 5, continued — Colebrook cross-check: &nbsp;solving Colebrook at Re = 12.2 × 10⁶, ε/D = 1.8 × 10⁻⁴ gives f = 0.0136 — the same value Haaland gives, so the explicit approximation costs nothing at this point. Equivalent length of the fittings: L<sub>eq</sub> = ΣK·D/f = 6 × 0.25 / 0.0136 = 110 m of extra pipe, against 15 m of physical line — minor losses dominate, in length units.<br>
+Step 10 — Euler number: &nbsp;Eu = Δp/(ρ·v²) = 120 kPa / (23.2 × 38.9²) = 3.42 = ½·[f·(L/D) + ΣK] = ½ × [0.0136 × 60 + 6] — the dimensionless loss agrees with the Step 5 bracket.</div>
+    <p class="boxed">Result: turbulent (Re 12.2 × 10⁶) · drag 5.05 kN ≈ 5 kN allowance · valve choked (0.357 &lt; 0.528), D<sub>valve</sub> ≈ 90 mm · Colebrook confirms f = 0.0136 · Eu = 3.42</p>
+    <p class="pe"><b>Plain English:</b> The four checks all land where the design already stood — the flow is turbulent so the turbulent pipe law was the right one, the calculated air drag matches the allowance to within a rounding, the valve runs choked and needs to be about 90 mm across, and the old Moody-chart equation confirms the friction factor the shortcut formula produced.</p>
   </div>
 
 </section>
